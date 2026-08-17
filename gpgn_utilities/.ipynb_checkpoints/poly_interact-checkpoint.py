@@ -63,8 +63,6 @@ class PolygonEditor(widgets.VBox):
         width, height : int
             Canvas size.
         """
-        if layout is None:
-            layout = {}
         super().__init__(layout=layout)
         
         # canvas layers: 0=background, 1=polygons
