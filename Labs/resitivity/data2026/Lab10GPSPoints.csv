@@ -1,0 +1,6 @@
+Point,Electrode Number,Meter Mark,Longitude (DD),Latitude (DD),Elevation (m),Description,Base Longitude (DD),Base Latitude (DD),Base Elevation (m)
+1,electrode 1,0m mark,-105.2219365,39.75107757,1744.572,Closest to Guggenheim,-105.2212767,39.75130884,1744.994
+2,electrode 17,4m mark,-105.2218984,39.7510987,1744.544,,-105.2212767,39.75130884,1744.994
+3,electrode 33,8m mark,-105.2218598,39.75111931,1744.47,,-105.2212767,39.75130884,1744.994
+4,electrode 49,12m mark,-105.2218224,39.75114066,1744.34,,-105.2212767,39.75130884,1744.994
+5,electrode 64,15.75 m mark,-105.2217865,39.75115992,1744.255,Closest to Green Center,-105.2212767,39.75130884,1744.994
