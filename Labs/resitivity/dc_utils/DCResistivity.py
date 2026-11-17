@@ -278,8 +278,8 @@ class DCRInversionApp(object):
                 self.dpred = []
 
                 for key in save_outputs.outDict.keys():
-                    self.phi_d.append(save_outputs.outDict[key]["phi_d"].copy() * 2.0)
-                    self.phi_m.append(save_outputs.outDict[key]["phi_m"].copy() * 2.0)
+                    self.phi_d.append(save_outputs.outDict[key]["phi_d"].copy())
+                    self.phi_m.append(save_outputs.outDict[key]["phi_m"].copy())
                     self.m.append(save_outputs.outDict[key]["m"].copy())
                     self.dpred.append(save_outputs.outDict[key]["dpred"].copy())
 
