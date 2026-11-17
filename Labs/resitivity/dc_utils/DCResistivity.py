@@ -131,10 +131,12 @@ class DCRInversionApp(object):
         print ((">> suggested initial resistivity: %1.f ohm-m")%(rho_0))
 
     def get_problem(self):
-        store_J = True
+        # Storing the sensitivity matrix is fastest, but SimPEG 0.24 fails when every current
+        # pair has only one voltage reading (as in a Wenner survey), so only store it otherwise.
+        store_J = self.survey.nD > self.survey.nSrc
         solver_type = DSolver
         actmap = maps.InjectActiveCells(
-            self.mesh, indActive=self.actind, valInactive=np.log(self.sigma_air),
+            self.mesh, active_cells=self.actind, value_inactive=np.log(self.sigma_air),
         )
         mapping = maps.ExpMap(self.mesh) * actmap
         sim = DC.Simulation2DNodal(
@@ -226,9 +228,15 @@ class DCRInversionApp(object):
                 reference_model=mref
             )
             # Personal preference for this solver with a Jacobi preconditioner
-            opt = optimization.ProjectedGNCG(
-                maxIter=maxIter, maxIterCG=maxIterCG, print_type='ubc'
-            )
+            # SimPEG renamed maxIterCG to cg_maxiter after v0.24; support both
+            if hasattr(optimization.ProjectedGNCG, 'cg_maxiter'):
+                opt = optimization.ProjectedGNCG(
+                    maxIter=maxIter, cg_maxiter=maxIterCG, print_type='ubc'
+                )
+            else:
+                opt = optimization.ProjectedGNCG(
+                    maxIter=maxIter, maxIterCG=maxIterCG, print_type='ubc'
+                )
             opt.factor = 1
             opt.remember('xc')
             invProb = inverse_problem.BaseInvProblem(dmis, reg, opt)
@@ -453,8 +461,15 @@ class DCRInversionApp(object):
 
     def plot_sensitivity(self, show_core, show_grid, scale, aspect_ratio):
         # inds_core, self. = Utils.ExtractCoreMesh(self.IO.xyzlim, self.mesh)
+        try:
+            tmp = self.JtJ
+        except ValueError:
+            # SimPEG 0.24 cannot build the full sensitivity matrix when every current pair
+            # has only one voltage reading (as in a Wenner survey)
+            print(">> The sensitivity plot is not available for this data set (for example, Wenner data).")
+            print("   Use the DOI analysis in Steps 7 and 8 to see which parts of the model the data control.")
+            return
         fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-        tmp = self.JtJ
         tmp[~self.actind] = np.nan
         vmin, vmax = np.nanmin(tmp), np.nanmax(tmp)
 
